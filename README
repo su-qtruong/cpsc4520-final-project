@@ -1,16 +1,16 @@
-# Running Sugarscape Experiments on Bridges-2
+Running Sugarscape Experiments on Bridges-2
 
-## Project Goal
+Project Goal
 
 This project investigates how different interest rates affect agent behavior in Sugarscape, including wealth distribution, inequality, population growth, lifespan, and loan activity.
 
-## Environment
+Environment
 
 * Platform: PSC Bridges-2
 * Project Allocation: cis260191p
 * Python Version: Python 3
 
-## Configuration
+Configuration
 
 Five experimental configurations were created in the `configs/` directory:
 
@@ -36,7 +36,7 @@ where x was:
 
 All configurations were executed in headless mode and produced JSON log files in the `results/` directory.
 
-## Running Experiments
+Running Experiments
 
 A Slurm batch script (`run_all.sh`) was created to execute all five simulations simultaneously:
 
