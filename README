@@ -39,7 +39,7 @@ Running Experiments
 Experiments are run on Bridges-2 using Slurm batch scripts.
 
 - `run_once.sh` runs each interest rate configuration once using a randomized seed.
-- `run_10.sh` runs each interest rate configuration 10 times using randomized seeds, for a total of 50 simulations.
+- `run_10.sh` runs each interest rate configuration 10 times using randomized seeds.
 
 Run the 6-test experiment with `sbatch run_once.sh`.
 
