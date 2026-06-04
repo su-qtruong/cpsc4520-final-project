@@ -3,7 +3,7 @@
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -t 02:00:00
-#SBATCH --mem=4G
+#SBATCH --mem-per-cpu=2000M
 #SBATCH --array=1-80
 #SBATCH --job-name=sugar-loans
 #SBATCH -o logs/run_%A_%a.out
