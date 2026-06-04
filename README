@@ -22,9 +22,7 @@ Five experimental configurations were created in the `configs/` directory:
 
 Each configuration used a different value for:
 
-```json
 "agentBaseInterestRate": [x, x]
-```
 
 where x was:
 
@@ -38,14 +36,14 @@ All configurations were executed in headless mode and produced JSON log files in
 
 Running Experiments
 
-A Slurm batch script (`run_all.sh`) was created to execute all five simulations simultaneously:
+Experiments are run on Bridges-2 using Slurm batch scripts.
 
-```bash
-sbatch run_all.sh
-```
+- `run_all.sh` runs each interest rate configuration once using a randomized seed.
+- `run_50.sh` runs each interest rate configuration 10 times using randomized seeds, for a total of 50 simulations.
 
-Job status was monitored using:
+Run the 5-test experiment with `sbatch run_all.sh`.
 
-```bash
-squeue -u <username>
-```
+Run the 50-test experiment with `sbatch --array=1-50 run_50.sh`.
+
+
+All simulation outputs are saved in the `results/` directory.
