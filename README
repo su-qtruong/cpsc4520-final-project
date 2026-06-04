@@ -1,49 +1,42 @@
 Running Sugarscape Experiments on Bridges-2
-
 Project Goal
 
 This project investigates how different interest rates affect agent behavior in Sugarscape, including wealth distribution, inequality, population growth, lifespan, and loan activity.
 
 Environment
-
-* Platform: PSC Bridges-2
-* Project Allocation: cis260191p
-* Python Version: Python 3
+Platform: PSC Bridges-2
+Project Allocation: cis260191p
+Python Version: Python 3
 
 Configuration
 
-Five experimental configurations were created in the `configs/` directory:
+Simulation configuration files are generated automatically using:
 
-* config_0.json
-* config_5.json
-* config_10.json
-* config_20.json
-* config_50.json
+make configs
 
-Each configuration used a different value for:
+This creates a set of experiment configurations in the configs/ directory. The experiments compare the following lending conditions:
 
-"agentBaseInterestRate": [x, x]
+baseline_no_lending
+standard_lending
+low_interest
+high_interest
+low_lending_factor
+high_lending_factor
+short_duration
+long_duration
 
-where x was:
-
-* 0.00
-* 0.05
-* 0.10
-* 0.20
-* 0.50
-
-All configurations were executed in headless mode and produced JSON log files in the `results/` directory.
+Each condition is generated with 10 randomized runs using different seeds, resulting in a total of 80 configuration files.
 
 Running Experiments
 
-Experiments are run on Bridges-2 using Slurm batch scripts.
+Experiments are submitted to Bridges-2 through Slurm using:
 
-- `run_once.sh` runs each interest rate configuration once using a randomized seed.
-- `run_10.sh` runs each interest rate configuration 10 times using randomized seeds.
+make submit-array
 
-Run the 6-test experiment with `sbatch run_once.sh`.
+This launches an array job where each interest rate configuration is executed 10 times with randomized seeds, for a total of 60 simulation runs.
 
-Run the 60-test experiment with `sbatch --array=1-60 run_10.sh`.
+Job status can be monitored with:
 
+squeue -u
 
-All simulation outputs are saved in the `results/` directory.
+All simulation outputs are saved in the results/ directory, and Slurm log files are saved in the logs/ directory.
