@@ -25,9 +25,22 @@ CLEAN = $(DATASET) \
 		$(SCREENSHOTS) \
 		$(TESTS)
 
-# Change to python3 (or other alias) if needed
+# Python / Sugarscape
 PYTHON = python3
 SUGARSCAPE = sugarscape.py
+
+# Lending experiment paths
+CONFIG_DIR = configs
+GENERATED_CONFIG_DIR = $(CONFIG_DIR)/generated
+CONFIG_LIST = $(CONFIG_DIR)/config_list.txt
+CONFIG_GENERATOR = scripts/generate_lending_configs.py
+LOG_DIR = logs
+RESULTS_DIR = results
+SLURM_DIR = slurm
+
+# Experiment setup: 8 configs x 10 random seeds = 80 jobs
+RUNS_PER_CONDITION = 10
+TIMESTEPS = 1000
 
 # Check for local Python aliases
 PYCHECK = $(shell which python > /dev/null; echo $$?)
@@ -69,11 +82,47 @@ endif
 test:
 	cd tests && $(PYTHON) $(TEST) --conf ../$(CONFIG)
 
+# Generate 80 lending experiment configs: 8 lending conditions x seeds 1-10
+configs:
+	mkdir -p $(GENERATED_CONFIG_DIR) $(RESULTS_DIR)
+	$(PYTHON) $(CONFIG_GENERATOR) \
+		--base $(CONFIG) \
+		--out $(GENERATED_CONFIG_DIR) \
+		--list $(CONFIG_LIST) \
+		--data-dir $(RESULTS_DIR) \
+		--runs-per-condition $(RUNS_PER_CONDITION) \
+		--timesteps $(TIMESTEPS)
+
+
+# Run the first generated config as a quick test
+run-generated-test:
+	mkdir -p $(RESULTS_DIR)
+	$(PYTHON) $(SUGARSCAPE) --conf $$(head -n 1 $(CONFIG_LIST))
+
+# Submit all generated configs using SLURM job array
+submit-array:
+	mkdir -p $(LOG_DIR) $(RESULTS_DIR)
+	sbatch $(SLURM_DIR)/run_array.sbatch
+
+# Full experiment workflow:
+# 1. generate configs
+# 2. submit SLURM array
+experiment: configs submit-array
+
+# Clean only generated config files
+clean-configs:
+	rm -rf $(GENERATED_CONFIG_DIR)/*.json $(CONFIG_LIST)
+	rm -rf $(CONFIG_DIR)
+
+# Clean generated simulation outputs and logs
+clean-experiment:
+	rm -rf data/*.json $(LOG_DIR)/*.out $(LOG_DIR)/*.err $(RESULTS_DIR)/*.csv
+
 clean:
 	rm -rf $(CLEAN) || true
 
 lean:
 	rm -rf $(PLOTS) || true
 
-.PHONY: all clean data lean plots run seeds setup test
+.PHONY: all clean data lean plots run seeds setup test configs run-generated-test submit-array experiment clean-configs clean-experiment
 # vim: set noexpandtab tabstop=4:
