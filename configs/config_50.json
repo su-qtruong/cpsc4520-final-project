@@ -117,7 +117,7 @@
         "neighborhoodMode": "vonNeumann",
         "profileMode": false,
         "screenshots": false,
-        "seed": 1,
+        "seed": -1,
         "startingAgents": 250,
         "startingDiseases": 50,
         "startingDiseasesPerAgent": [0, 0],
