@@ -29,7 +29,7 @@ CLEAN = $(DATASET) \
 PYTHON = python3
 SUGARSCAPE = sugarscape.py
 
-# Lending experiment paths
+# Experiment paths
 CONFIG_DIR = configs
 GENERATED_CONFIG_DIR = $(CONFIG_DIR)/generated
 CONFIG_LIST = $(CONFIG_DIR)/config_list.txt
@@ -82,7 +82,7 @@ endif
 test:
 	cd tests && $(PYTHON) $(TEST) --conf ../$(CONFIG)
 
-# Generate 80 lending experiment configs: 8 lending conditions x seeds 1-10
+# Generate 80 configs: 8 lending conditions x seeds 1-10
 configs:
 	mkdir -p $(GENERATED_CONFIG_DIR) $(RESULTS_DIR)
 	$(PYTHON) $(CONFIG_GENERATOR) \
@@ -93,28 +93,25 @@ configs:
 		--runs-per-condition $(RUNS_PER_CONDITION) \
 		--timesteps $(TIMESTEPS)
 
-
-# Run the first generated config as a quick test
+# Test run
 run-generated-test:
 	mkdir -p $(RESULTS_DIR)
 	$(PYTHON) $(SUGARSCAPE) --conf $$(head -n 1 $(CONFIG_LIST))
 
-# Submit all generated configs using SLURM job array
+# Submit configs using SLURM job array
 submit-array:
 	mkdir -p $(LOG_DIR) $(RESULTS_DIR)
 	sbatch $(SLURM_DIR)/run_array.sbatch
 
-# Full experiment workflow:
-# 1. generate configs
-# 2. submit SLURM array
+# Full experiment workflow: generate configs + submit SLURM array
 experiment: configs submit-array
 
-# Clean only generated config files
+# Clean config files
 clean-configs:
 	rm -rf $(GENERATED_CONFIG_DIR)/*.json $(CONFIG_LIST)
 	rm -rf $(CONFIG_DIR)
 
-# Clean generated simulation outputs and logs
+# Clean outputs and logs
 clean-experiment:
 	rm -rf data/*.json $(LOG_DIR)/*.out $(LOG_DIR)/*.err $(RESULTS_DIR)/*.csv
 
